@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Adjective Word Cloud – Haunted Places</title>
+<script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
+<script src="https://unpkg.com/d3-cloud/build/d3.layout.cloud.js"></script>
+<style>
+  body { margin:0; background:#fff;
+         display:flex; justify-content:center; align-items:center; height:100vh; }
+  svg text { font-family:Impact, sans-serif; cursor:pointer; }
+  svg text:hover { fill:#ff4500; }
+</style>
+</head>
+<body>
+<script>
+const WORDS = [{"text": "strange", "value": 1233}, {"text": "cold", "value": 780}, {"text": "white", "value": 699}, {"text": "early", "value": 570}, {"text": "late", "value": 533}, {"text": "few", "value": 514}, {"text": "second", "value": 466}, {"text": "black", "value": 453}, {"text": "open", "value": 408}, {"text": "former", "value": 395}, {"text": "next", "value": 391}, {"text": "third", "value": 332}, {"text": "new", "value": 323}, {"text": "own", "value": 316}, {"text": "dead", "value": 315}, {"text": "indian", "value": 313}, {"text": "high", "value": 305}, {"text": "such", "value": 303}, {"text": "most", "value": 297}, {"text": "more", "value": 272}, {"text": "numerous", "value": 267}, {"text": "right", "value": 264}, {"text": "local", "value": 262}, {"text": "red", "value": 254}, {"text": "main", "value": 251}, {"text": "light", "value": 234}, {"text": "top", "value": 231}, {"text": "original", "value": 228}, {"text": "certain", "value": 221}, {"text": "dark", "value": 215}, {"text": "full", "value": 208}, {"text": "attic", "value": 195}, {"text": "loud", "value": 194}, {"text": "weird", "value": 192}, {"text": "empty", "value": 191}, {"text": "mysterious", "value": 188}, {"text": "unknown", "value": 186}, {"text": "only", "value": 180}, {"text": "back", "value": 177}, {"text": "upstairs", "value": 173}, {"text": "green", "value": 173}, {"text": "due", "value": 170}, {"text": "various", "value": 166}, {"text": "female", "value": 148}, {"text": "older", "value": 144}, {"text": "least", "value": 143}, {"text": "unexplained", "value": 142}, {"text": "odd", "value": 139}, {"text": "sure", "value": 137}, {"text": "front", "value": 134}, {"text": "blue", "value": 128}, {"text": "whole", "value": 126}, {"text": "haunted", "value": 122}, {"text": "paranormal", "value": 119}, {"text": "strong", "value": 114}, {"text": "civil", "value": 114}, {"text": "close", "value": 111}, {"text": "tall", "value": 108}, {"text": "oldest", "value": 108}, {"text": "upper", "value": 107}, {"text": "eerie", "value": 107}, {"text": "entire", "value": 106}, {"text": "ghostly", "value": 104}, {"text": "present", "value": 103}, {"text": "hear", "value": 103}, {"text": "past", "value": 102}, {"text": "able", "value": 101}, {"text": "real", "value": 99}, {"text": "particular", "value": 94}, {"text": "huge", "value": 93}, {"text": "nearby", "value": 92}, {"text": "sudden", "value": 91}, {"text": "famous", "value": 89}, {"text": "evil", "value": 87}, {"text": "heavy", "value": 87}, {"text": "fourth", "value": 86}, {"text": "private", "value": 84}, {"text": "human", "value": 82}, {"text": "outside", "value": 82}, {"text": "elderly", "value": 80}, {"text": "hard", "value": 78}, {"text": "mental", "value": 77}, {"text": "shadowy", "value": 77}, {"text": "girl", "value": 75}, {"text": "lower", "value": 75}, {"text": "american", "value": 75}, {"text": "native", "value": 75}, {"text": "hot", "value": 75}, {"text": "common", "value": 73}, {"text": "true", "value": 72}, {"text": "quiet", "value": 72}, {"text": "hearing", "value": 71}, {"text": "actual", "value": 69}, {"text": "active", "value": 68}, {"text": "angry", "value": 68}, {"text": "electrical", "value": 67}, {"text": "male", "value": 66}, {"text": "creepy", "value": 65}, {"text": "neutral", "value": 63}, {"text": "friendly", "value": 63}, {"text": "historic", "value": 63}, {"text": "bright", "value": 61}, {"text": "unusual", "value": 61}, {"text": "deep", "value": 60}, {"text": "current", "value": 59}, {"text": "historical", "value": 59}, {"text": "lantern", "value": 59}, {"text": "left", "value": 58}, {"text": "foot", "value": 58}, {"text": "crazy", "value": 58}, {"text": "beautiful", "value": 57}, {"text": "north", "value": 57}, {"text": "previous", "value": 55}, {"text": "funeral", "value": 54}, {"text": "uneasy", "value": 54}, {"text": "clear", "value": 54}, {"text": "pregnant", "value": 53}, {"text": "unseen", "value": 53}, {"text": "scary", "value": 53}, {"text": "west", "value": 52}, {"text": "alive", "value": 52}, {"text": "possible", "value": 51}, {"text": "horrible", "value": 51}, {"text": "wrong", "value": 51}, {"text": "visible", "value": 50}, {"text": "unexplainable", "value": 50}, {"text": "south", "value": 50}, {"text": "single", "value": 49}, {"text": "heard", "value": 49}, {"text": "additional", "value": 48}, {"text": "careful", "value": 48}, {"text": "locked", "value": 47}, {"text": "burial", "value": 47}, {"text": "vacant", "value": 46}, {"text": "middle", "value": 46}, {"text": "popular", "value": 45}, {"text": "normal", "value": 45}, {"text": "military", "value": 44}, {"text": "yellow", "value": 44}, {"text": "warm", "value": 43}, {"text": "victorian", "value": 43}, {"text": "negative", "value": 43}, {"text": "east", "value": 43}, {"text": "broken", "value": 42}, {"text": "wooden", "value": 42}, {"text": "underground", "value": 41}, {"text": "gray", "value": 40}, {"text": "similar", "value": 39}, {"text": "violent", "value": 39}, {"text": "thin", "value": 39}];
+const width = window.innerWidth, height = window.innerHeight;
+const size = d3.scaleLinear().domain(d3.extent(WORDS,d=>d.value)).range([14,90]);
+
+d3.layout.cloud()
+  .size([width,height])
+  .words(WORDS.map(d=>Object.assign({},d)))
+  .padding(2)
+  .rotate(()=>Math.random()<0.5?0:90)
+  .font("Impact")
+  .fontSize(d=>size(d.value))
+  .on("end",draw)
+  .start();
+
+function draw(words) {
+  d3.select("body").append("svg").attr("width",width).attr("height",height)
+    .append("g").attr("transform",`translate(${width/2},${height/2})`)
+    .selectAll("text").data(words).join("text")
+      .attr("text-anchor","middle")
+      .attr("transform",d=>`translate(${d.x},${d.y}) rotate(${d.rotate})`)
+      .style("font-size",d=>d.size+"px")
+      .style("fill",(_,i)=>d3.interpolateTurbo(i/WORDS.length))
+      .text(d=>d.text)
+      .append("title").text(d=>d.value);
+}
+</script>
+</body>
+</html>

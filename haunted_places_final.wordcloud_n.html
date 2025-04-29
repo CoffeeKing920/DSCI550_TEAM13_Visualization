@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Noun Word Cloud – Haunted Places</title>
+<script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
+<script src="https://unpkg.com/d3-cloud/build/d3.layout.cloud.js"></script>
+<style>
+  body { margin:0; background:#fff;
+         display:flex; justify-content:center; align-items:center; height:100vh; }
+  svg text { font-family:Impact, sans-serif; cursor:pointer; }
+  svg text:hover { fill:#ff4500; }
+</style>
+</head>
+<body>
+<script>
+const WORDS = [{"text": "room", "value": 2162}, {"text": "man", "value": 2134}, {"text": "building", "value": 1908}, {"text": "school", "value": 1716}, {"text": "floor", "value": 1684}, {"text": "girl", "value": 1571}, {"text": "woman", "value": 1480}, {"text": "lights", "value": 1457}, {"text": "years", "value": 1312}, {"text": "car", "value": 1201}, {"text": "hall", "value": 1085}, {"text": "doors", "value": 1077}, {"text": "reports", "value": 1076}, {"text": "bridge", "value": 1043}, {"text": "children", "value": 922}, {"text": "things", "value": 921}, {"text": "someone", "value": 866}, {"text": "noises", "value": 827}, {"text": "boy", "value": 823}, {"text": "footsteps", "value": 763}, {"text": "door", "value": 740}, {"text": "story", "value": 701}, {"text": "students", "value": 691}, {"text": "voices", "value": 674}, {"text": "basement", "value": 660}, {"text": "home", "value": 636}, {"text": "times", "value": 633}, {"text": "sightings", "value": 630}, {"text": "side", "value": 616}, {"text": "woods", "value": 605}, {"text": "rooms", "value": 574}, {"text": "church", "value": 569}, {"text": "lady", "value": 548}, {"text": "spirit", "value": 548}, {"text": "death", "value": 531}, {"text": "figure", "value": 529}, {"text": "sounds", "value": 528}, {"text": "family", "value": 521}, {"text": "employees", "value": 521}, {"text": "hospital", "value": 518}, {"text": "window", "value": 518}, {"text": "feeling", "value": 514}, {"text": "park", "value": 503}, {"text": "light", "value": 503}, {"text": "hill", "value": 496}, {"text": "hotel", "value": 491}, {"text": "spots", "value": 488}, {"text": "something", "value": 460}, {"text": "fire", "value": 454}, {"text": "way", "value": 454}, {"text": "spirits", "value": 452}, {"text": "girls", "value": 450}, {"text": "update", "value": 449}, {"text": "halls", "value": 448}, {"text": "front", "value": 440}, {"text": "apparitions", "value": 436}, {"text": "site", "value": 432}, {"text": "stairs", "value": 430}, {"text": "town", "value": 429}, {"text": "presence", "value": 427}, {"text": "war", "value": 427}, {"text": "windows", "value": 419}, {"text": "tree", "value": 404}, {"text": "bathroom", "value": 400}, {"text": "name", "value": 400}, {"text": "train", "value": 398}, {"text": "street", "value": 396}, {"text": "kids", "value": 391}, {"text": "back", "value": 387}, {"text": "middle", "value": 385}, {"text": "water", "value": 384}, {"text": "baby", "value": 373}, {"text": "head", "value": 370}, {"text": "screams", "value": 369}, {"text": "ground", "value": 364}, {"text": "workers", "value": 364}, {"text": "apparition", "value": 357}, {"text": "stories", "value": 348}, {"text": "tracks", "value": 346}, {"text": "person", "value": 345}, {"text": "auditorium", "value": 344}, {"text": "student", "value": 342}, {"text": "nights", "value": 341}, {"text": "body", "value": 340}, {"text": "year", "value": 337}, {"text": "child", "value": 333}, {"text": "legend", "value": 332}, {"text": "lot", "value": 332}, {"text": "wife", "value": 330}, {"text": "morning", "value": 326}, {"text": "restaurant", "value": 323}, {"text": "end", "value": 320}, {"text": "figures", "value": 320}, {"text": "stage", "value": 317}, {"text": "top", "value": 317}, {"text": "grave", "value": 314}, {"text": "wall", "value": 309}, {"text": "theater", "value": 308}, {"text": "sound", "value": 307}, {"text": "men", "value": 304}, {"text": "women", "value": 304}, {"text": "eyes", "value": 303}, {"text": "buildings", "value": 298}, {"text": "hours", "value": 293}, {"text": "dress", "value": 291}, {"text": "river", "value": 288}, {"text": "part", "value": 287}, {"text": "walls", "value": 286}, {"text": "store", "value": 283}, {"text": "theatre", "value": 283}, {"text": "office", "value": 283}, {"text": "center", "value": 282}, {"text": "lake", "value": 277}, {"text": "corner", "value": 277}, {"text": "witnesses", "value": 276}, {"text": "gym", "value": 272}, {"text": "graveyard", "value": 272}, {"text": "nothing", "value": 271}, {"text": "midnight", "value": 270}, {"text": "blood", "value": 269}, {"text": "owner", "value": 268}, {"text": "mansion", "value": 267}, {"text": "feelings", "value": 266}, {"text": "trees", "value": 264}, {"text": "shadows", "value": 260}, {"text": "soldiers", "value": 259}, {"text": "face", "value": 258}, {"text": "bar", "value": 253}, {"text": "campus", "value": 253}, {"text": "hallway", "value": 252}, {"text": "creek", "value": 250}, {"text": "staff", "value": 250}, {"text": "suicide", "value": 248}, {"text": "couple", "value": 247}, {"text": "activity", "value": 246}, {"text": "police", "value": 245}, {"text": "grounds", "value": 245}, {"text": "residents", "value": 243}, {"text": "anyone", "value": 242}, {"text": "orbs", "value": 232}, {"text": "mother", "value": 232}, {"text": "state", "value": 230}, {"text": "dorm", "value": 230}, {"text": "old", "value": 226}, {"text": "pictures", "value": 225}, {"text": "janitor", "value": 225}, {"text": "property", "value": 223}, {"text": "others", "value": 221}, {"text": "hand", "value": 219}, {"text": "spot", "value": 218}];
+const width = window.innerWidth, height = window.innerHeight;
+const sizeScale = d3.scaleLinear().domain(d3.extent(WORDS,d=>d.value)).range([14,90]);
+d3.layout.cloud()
+    .size([width,height])
+    .words(WORDS.map(d=>Object.assign({},d)))
+    .padding(2)
+    .rotate(()=>Math.random()<0.5?0:90)
+    .font('Impact')
+    .fontSize(d=>sizeScale(d.value))
+    .on('end',draw).start();
+function draw(words) {
+  d3.select('body').append('svg').attr('width',width).attr('height',height)
+    .append('g').attr('transform',`translate(${width/2},${height/2})`)
+    .selectAll('text').data(words).join('text')
+      .attr('text-anchor','middle')
+      .attr('transform',d=>`translate(${d.x},${d.y}) rotate(${d.rotate})`)
+      .style('font-size',d=>d.size+'px')
+      .style('fill',(_,i)=>d3.interpolateTurbo(i/WORDS.length))
+      .text(d=>d.text)
+      .append('title').text(d=>d.value);
+}
+</script>
+</body>
+</html>
