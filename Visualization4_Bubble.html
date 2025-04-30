@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bubble Chart: Mental Illness vs Haunted Witnesses</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  .bubble { stroke: #000; stroke-width: 0.3px; }
+  text { font-size: 10px; text-anchor: middle; fill: black; pointer-events: none; }
+  .tooltip {
+    position: absolute; visibility: hidden; padding: 5px;
+    background: rgba(0,0,0,0.6); color: white; border-radius: 4px; font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div id="chart"></div>
+<div class="tooltip" id="tooltip"></div>
+<svg id="legend" width="300" height="50"></svg>
+<script>
+const data = [{"state_abbrev": "AK", "Haunted Places Witness Count": 13.0, "happiness score": 46.27, "mental illness rate (%)": 22.2}, {"state_abbrev": "AL", "Haunted Places Witness Count": 105.0, "happiness score": 39.32, "mental illness rate (%)": 21.24}, {"state_abbrev": "AR", "Haunted Places Witness Count": 64.0, "happiness score": 38.23, "mental illness rate (%)": 22.610000000000003}, {"state_abbrev": "AZ", "Haunted Places Witness Count": 82.0, "happiness score": 50.22, "mental illness rate (%)": 23.89}, {"state_abbrev": "CA", "Haunted Places Witness Count": 640.0, "happiness score": 59.93038277511962, "mental illness rate (%)": 20.494593301435405}, {"state_abbrev": "CO", "Haunted Places Witness Count": 97.0, "happiness score": 50.7, "mental illness rate (%)": 23.16}, {"state_abbrev": "CT", "Haunted Places Witness Count": 112.0, "happiness score": 58.14999999999999, "mental illness rate (%)": 18.77}, {"state_abbrev": "DC", "Haunted Places Witness Count": 18.0, "happiness score": 53.53, "mental illness rate (%)": 25.51}, {"state_abbrev": "DE", "Haunted Places Witness Count": 14.0, "happiness score": 55.16, "mental illness rate (%)": 20.52}, {"state_abbrev": "FL", "Haunted Places Witness Count": 186.0, "happiness score": 55.08, "mental illness rate (%)": 17.49}, {"state_abbrev": "GA", "Haunted Places Witness Count": 201.0, "happiness score": 54.78, "mental illness rate (%)": 17.55}, {"state_abbrev": "HI", "Haunted Places Witness Count": 40.0, "happiness score": 66.31, "mental illness rate (%)": 17.86}, {"state_abbrev": "IA", "Haunted Places Witness Count": 105.0, "happiness score": 55.57, "mental illness rate (%)": 21.0}, {"state_abbrev": "ID", "Haunted Places Witness Count": 44.0, "happiness score": 61.6, "mental illness rate (%)": 24.92}, {"state_abbrev": "IL", "Haunted Places Witness Count": 226.0, "happiness score": 58.589999999999996, "mental illness rate (%)": 20.72}, {"state_abbrev": "IN", "Haunted Places Witness Count": 242.0, "happiness score": 47.41, "mental illness rate (%)": 21.83}, {"state_abbrev": "KS", "Haunted Places Witness Count": 63.0, "happiness score": 49.9, "mental illness rate (%)": 26.02}, {"state_abbrev": "KY", "Haunted Places Witness Count": 181.0, "happiness score": 38.36, "mental illness rate (%)": 21.91}, {"state_abbrev": "LA", "Haunted Places Witness Count": 56.0, "happiness score": 34.81, "mental illness rate (%)": 21.18}, {"state_abbrev": "MA", "Haunted Places Witness Count": 167.0, "happiness score": 57.11999999999999, "mental illness rate (%)": 21.39}, {"state_abbrev": "MD", "Haunted Places Witness Count": 72.0, "happiness score": 62.6, "mental illness rate (%)": 17.8}, {"state_abbrev": "ME", "Haunted Places Witness Count": 26.0, "happiness score": 52.67, "mental illness rate (%)": 21.61}, {"state_abbrev": "MI", "Haunted Places Witness Count": 330.0, "happiness score": 46.51, "mental illness rate (%)": 22.33}, {"state_abbrev": "MN", "Haunted Places Witness Count": 73.0, "happiness score": 62.43, "mental illness rate (%)": 23.23}, {"state_abbrev": "MO", "Haunted Places Witness Count": 184.0, "happiness score": 45.38, "mental illness rate (%)": 21.32}, {"state_abbrev": "MS", "Haunted Places Witness Count": 34.0, "happiness score": 39.58, "mental illness rate (%)": 21.06}, {"state_abbrev": "MT", "Haunted Places Witness Count": 21.0, "happiness score": 51.34, "mental illness rate (%)": 23.43}, {"state_abbrev": "NC", "Haunted Places Witness Count": 108.0, "happiness score": 53.65, "mental illness rate (%)": 19.8}, {"state_abbrev": "ND", "Haunted Places Witness Count": 40.0, "happiness score": 57.37, "mental illness rate (%)": 20.79}, {"state_abbrev": "NE", "Haunted Places Witness Count": 61.0, "happiness score": 58.19, "mental illness rate (%)": 23.409999999999997}, {"state_abbrev": "NH", "Haunted Places Witness Count": 42.0, "happiness score": 56.46, "mental illness rate (%)": 23.74}, {"state_abbrev": "NJ", "Haunted Places Witness Count": 86.0, "happiness score": 61.71000000000001, "mental illness rate (%)": 18.27}, {"state_abbrev": "NM", "Haunted Places Witness Count": 50.0, "happiness score": 43.64, "mental illness rate (%)": 21.16}, {"state_abbrev": "NV", "Haunted Places Witness Count": 28.0, "happiness score": 48.16, "mental illness rate (%)": 21.38}, {"state_abbrev": "NY", "Haunted Places Witness Count": 261.0, "happiness score": 53.36, "mental illness rate (%)": 18.83}, {"state_abbrev": "OH", "Haunted Places Witness Count": 262.0, "happiness score": 46.81, "mental illness rate (%)": 24.32}, {"state_abbrev": "OK", "Haunted Places Witness Count": 127.0, "happiness score": 40.69, "mental illness rate (%)": 25.59}, {"state_abbrev": "OR", "Haunted Places Witness Count": 76.0, "happiness score": 52.11, "mental illness rate (%)": 27.33}, {"state_abbrev": "PA", "Haunted Places Witness Count": 360.0, "happiness score": 51.87, "mental illness rate (%)": 19.68}, {"state_abbrev": "RI", "Haunted Places Witness Count": 42.0, "happiness score": 51.55, "mental illness rate (%)": 24.12}, {"state_abbrev": "SC", "Haunted Places Witness Count": 90.0, "happiness score": 49.90551724137931, "mental illness rate (%)": 21.656896551724138}, {"state_abbrev": "SD", "Haunted Places Witness Count": 30.0, "happiness score": 57.6, "mental illness rate (%)": 21.25}, {"state_abbrev": "TN", "Haunted Places Witness Count": 122.0, "happiness score": 43.35, "mental illness rate (%)": 20.46}, {"state_abbrev": "TX", "Haunted Places Witness Count": 419.0, "happiness score": 47.74, "mental illness rate (%)": 17.96}, {"state_abbrev": "UT", "Haunted Places Witness Count": 65.0, "happiness score": 62.41, "mental illness rate (%)": 29.680000000000003}, {"state_abbrev": "VA", "Haunted Places Witness Count": 85.0, "happiness score": 57.84000000000001, "mental illness rate (%)": 20.51}, {"state_abbrev": "VT", "Haunted Places Witness Count": 20.0, "happiness score": 48.46000000000001, "mental illness rate (%)": 23.71}, {"state_abbrev": "WA", "Haunted Places Witness Count": 123.0, "happiness score": 53.53, "mental illness rate (%)": 25.51}, {"state_abbrev": "WI", "Haunted Places Witness Count": 172.0, "happiness score": 53.61, "mental illness rate (%)": 21.83}, {"state_abbrev": "WV", "Haunted Places Witness Count": 50.0, "happiness score": 33.83, "mental illness rate (%)": 26.05}, {"state_abbrev": "WY", "Haunted Places Witness Count": 36.0, "happiness score": 52.4, "mental illness rate (%)": 23.63}];
+const width = 900, height = 600, margin = 50;
+
+const svg = d3.select("#chart").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+const tooltip = d3.select("#tooltip");
+
+// Scales
+const x = d3.scaleLinear()
+    .domain(d3.extent(data, d => d["mental illness rate (%)"]))
+    .range([margin, width - margin]);
+
+const radius = d3.scaleSqrt()
+    .domain([0, d3.max(data, d => d["Haunted Places Witness Count"])])
+    .range([10, 50]);
+
+// Color scale: light orange to yellow
+const color = d3.scaleLinear()
+    .domain(d3.extent(data, d => d["happiness score"]))
+    .range(["#fdae6b", "#ffffb2"])
+    .interpolate(d3.interpolateRgb);
+
+// Force layout
+const simulation = d3.forceSimulation(data)
+    .force("x", d3.forceX(d => x(d["mental illness rate (%)"])).strength(1))
+    .force("y", d3.forceY(height / 2).strength(0.05))
+    .force("collide", d3.forceCollide(d => radius(d["Haunted Places Witness Count"]) + 2))
+    .on("tick", ticked);
+
+// X-Axis
+const xAxis = d3.axisBottom(x);
+svg.append("g")
+    .attr("transform", `translate(0,${height - margin})`)
+    .call(xAxis)
+    .append("text")
+    .attr("x", width / 2)
+    .attr("y", 35)
+    .attr("fill", "black")
+    .attr("text-anchor", "middle")
+    .text("Mental Illness Rate (%)");
+
+// Nodes
+const node = svg.selectAll("g.node")
+    .data(data)
+    .enter().append("g")
+    .attr("class", "node")
+    .on("mouseover", (event, d) => {
+      tooltip.style("visibility", "visible")
+             .html(`<b>${d.state_abbrev}</b><br/>Happiness: ${d["happiness score"].toFixed(2)}<br/>Mental Illness: ${d["mental illness rate (%)"].toFixed(2)}%<br/>Witnesses: ${d["Haunted Places Witness Count"]}`);
+    })
+    .on("mousemove", event => {
+      tooltip.style("top", (event.pageY + 10) + "px").style("left", (event.pageX + 10) + "px");
+    })
+    .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
+node.append("circle")
+    .attr("class", "bubble")
+    .attr("r", d => radius(d["Haunted Places Witness Count"]))
+    .attr("fill", d => color(d["happiness score"]));
+
+node.append("text")
+    .text(d => d.state_abbrev);
+
+// Tick update
+function ticked() {
+  node.attr("transform", d => `translate(${d.x}, ${d.y})`);
+}
+
+// Legend
+const legendWidth = 300;
+const legendHeight = 10;
+const happinessMin = 33.83;
+const happinessMax = 66.31;
+
+const legendSvg = d3.select("#legend");
+const defs = legendSvg.append("defs");
+const gradient = defs.append("linearGradient")
+  .attr("id", "gradient")
+  .attr("x1", "0%").attr("y1", "0%")
+  .attr("x2", "100%").attr("y2", "0%");
+
+gradient.append("stop").attr("offset", "0%").attr("stop-color", "#fdae6b");
+gradient.append("stop").attr("offset", "100%").attr("stop-color", "#ffffb2");
+
+legendSvg.append("rect")
+  .attr("x", 10)
+  .attr("y", 10)
+  .attr("width", legendWidth)
+  .attr("height", legendHeight)
+  .style("fill", "url(#gradient)");
+
+legendSvg.append("text")
+  .attr("x", 10)
+  .attr("y", 35)
+  .attr("font-size", "10px")
+  .text(happinessMin.toFixed(1));
+
+legendSvg.append("text")
+  .attr("x", 10 + legendWidth)
+  .attr("y", 35)
+  .attr("font-size", "10px")
+  .attr("text-anchor", "end")
+  .text(happinessMax.toFixed(1));
+
+legendSvg.append("text")
+  .attr("x", legendWidth / 2 + 10)
+  .attr("y", 45)
+  .attr("font-size", "10px")
+  .attr("text-anchor", "middle")
+  .text("Happiness Score");
+</script>
+</body>
+</html>
